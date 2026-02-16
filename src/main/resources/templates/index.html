@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div> Welcome to the main page</div>
+<br>
+
+<li th:each="product : ${products}">
+    <span th:text="${product.name} + ', ' + ${product.description} + ', ' + ${product.price}"></span>
+</li>
+</body>
+</html>
