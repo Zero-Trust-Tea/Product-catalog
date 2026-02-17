@@ -1,11 +1,158 @@
 <!DOCTYPE html>
 <html>
+<!--<link rel="stylesheet" th:href="@{/css/style.css}">-->
+<script th:src="@{/main.js}" defer></script>
+
 <body>
+
+<style>
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    #addProductBtn {
+        margin-top: 10px;
+    }
+
+    .addProductInner {
+        margin-top: 8px;
+        display: none;
+        flex-direction: column;
+    }
+
+    .addProductFields {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #productName, #productDescription, #productPrice {
+        margin: 2px;
+    }
+
+    .removeProductInner {
+        margin-top: 8px;
+        display: none;
+    }
+
+    #productId {
+        margin: 2px;
+    }
+
+    #removeProductBtn {
+        margin-top: 10px;
+    }
+
+    .productManager {
+        display: flex;
+    }
+
+    .addProduct {
+        margin-right: 5px;
+    }
+
+    .removeProduct {
+        margin-left: 5px;
+    }
+</style>
+
 <div> Welcome to the main page</div>
 <br>
 
-<li th:each="product : ${products}">
-    <span th:text="${product.name} + ', ' + ${product.description} + ', ' + ${product.price}"></span>
-</li>
+<button id="showProducts">Show products</button>
+
+
+<ul id="products" style="display: none;">
+    <li th:each="product : ${products}">
+        <span th:text="${product.name} + ', ' + ${product.description} + ', '
+         + ${product.price} + ', id: ' + ${product.id}"></span>
+    </li>
+</ul>
+
+<div class="productManager">
+    <div class = "addProduct">
+        <button id="addProductBtn">Add product</button>
+
+        <div class="addProductInner">
+            <input id="productName" type="text" placeholder="Product name">
+            <input id="productDescription" type="text" placeholder="Product description">
+            <input id="productPrice" type="text" placeholder="Product price">
+        </div>
+
+        <button class="addProductInner" id = "confirmProductBtn">Confirm</button>
+    </div>
+
+    <div class = "removeProduct">
+        <button id ="removeProductBtn">Remove</button>
+
+        <div class="removeProductInner">
+            <input id="productId" type="text" placeholder="Product id">
+        </div>
+
+        <button class="removeProductInner" id = "confirmRemoveProductBtn">Confirm</button>
+    </div>
+</div>
+
+<script>
+    (function sendAddItemRequest() {
+        document.getElementById('confirmProductBtn').addEventListener('click', ()=>{
+            addItemRequest();
+        })
+    })();
+
+    function addItemRequest() {
+        const name = document.getElementById('productName').value;
+        const description = document.getElementById('productDescription').value;
+        const price = parseInt(document.getElementById('productPrice').value, 10);
+
+        const formData = new URLSearchParams();
+        formData.append("name", name);
+        formData.append("description", description);
+        formData.append("price", price);
+
+        fetch('/add-product', {
+            method: 'POST',
+            body: formData
+        }).then(response =>{
+            if(!response.ok) {
+                throw new Error("Http error" + response.status);
+            }
+            return response.text();
+        }).then(data => {
+            console.log("Success: " + data);
+        }).catch(err => {
+            console.log("Error: " + err);
+        });
+    }
+
+    (function sendDeleteItemRequest() {
+        document.getElementById('confirmRemoveProductBtn').addEventListener('click', ()=>{
+            deleteItemRequest();
+        })
+    })();
+
+    function deleteItemRequest() {
+        const id = document.getElementById('productId').value;
+
+        const formData = new URLSearchParams();
+        formData.append("id", id);
+
+        fetch("/remove-product?id=" + id, {
+            method: 'DELETE',
+        }).then((response) => {
+            if (!response.ok) {
+                throw new Error("Http error: " + response.status);
+            }
+            return response.text();
+        }).then(data => {
+            console.log("Success: " + data);
+        }).catch(err => {
+            console.log("Error: " + err);
+        })
+    }
+</script>
+
 </body>
 </html>

@@ -11,7 +11,7 @@ public class ProductEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Getter
-    private int id;
+    private long id;
     @Setter @Getter
     private String name;
     @Setter @Getter
@@ -26,6 +26,11 @@ public class ProductEntity {
         this.name = name;
         this.description = description;
         this.price = price;
+    }
+
+    public String toString() {
+        return "name: " + getName() + ", description: " + getDescription() +
+                ", price: " + getPrice() + ", id: " + getId();
     }
 
 }
